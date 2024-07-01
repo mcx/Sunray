@@ -75,10 +75,11 @@ void LidarGpsDriver::run(){
 
 
 LidarImuDriver::LidarImuDriver(){    
+  dataAvail = false;
+  imuFound = false;
 }
 
-void LidarImuDriver::detect(){
-  imuFound = true;
+void LidarImuDriver::detect(){  
 }
 
 
@@ -92,8 +93,11 @@ void LidarImuDriver::run(){
 
 
 bool LidarImuDriver::isDataAvail(){
+ 
+    bool res = dataAvail;
+    dataAvail = false; 
+    return res;
 
-    return true;
 }         
     
 void LidarImuDriver::resetData(){
