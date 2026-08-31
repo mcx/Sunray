@@ -426,6 +426,11 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define DOCK_IGNORE_GPS false     // use GPS fix in docking station and IMU for GPS float/invalid
 //#define DOCK_IGNORE_GPS true     // ignore GPS fix in docking station and use IMU-only (use this if robot gets false GPS fixes in your docking station)
 
+//#define DOCK_IGNORE_GPS_DISTANCE 1.5 // ignore GPS position/heading on final docking segment within this distance (m)
+
+// Continue straight for this odometry distance after the charging contacts are first detected (m); 0 disables it.
+#define DOCK_CONTACT_ADVANCE_DISTANCE 0.0
+
 #define DOCK_AUTO_START true     // robot will automatically continue mowing after docked automatically
 //#define DOCK_AUTO_START false      // robot will not automatically continue mowing after docked automatically
 

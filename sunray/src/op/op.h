@@ -157,6 +157,10 @@ class DockOp: public Op {
     unsigned long dockReasonRainAutoStartTime;
     bool lastMapRoutingFailed;
     int mapRoutingFailedCounter;
+    bool dockContactAdvanceActive;
+    unsigned long dockContactAdvanceStartLeftTicks;
+    unsigned long dockContactAdvanceStartRightTicks;
+    unsigned long dockContactAdvanceStopTime;
     DockOp();
     virtual String name() override;
     virtual void begin() override;
@@ -169,8 +173,8 @@ class DockOp: public Op {
     virtual void onNoFurtherWaypoints() override;              
     virtual void onGpsNoSignal() override;
     virtual void onKidnapped(bool state) override;
+    virtual void onChargerConnected() override;
     bool activateDeadReckoningNearDock();
-    //virtual void onChargerConnected() override;   
 };
 
 // charging op
@@ -290,4 +294,3 @@ extern RelocalizationOp relocalizationOp;
 extern Op *activeOp;
 
 #endif
-
