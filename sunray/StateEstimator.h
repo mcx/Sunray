@@ -57,6 +57,7 @@ public:
   float diffIMUWheelYawSpeedLP = 0;
 
   bool gpsJump = false;
+  bool dockGpsIgnored = false; // latched IMU/odometry-only mode near final dock point
 
   bool imuIsCalibrating = false;
   float lastIMUYaw = 0;

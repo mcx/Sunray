@@ -318,6 +318,36 @@ void StateEstimator::computeRobotState(){
     }
   #endif
 
+  // ------- GPS shadow near docking station --------------------------
+  // Metal docking enclosures can make an RTK fix jump or disappear. Once the
+  // mower reaches the configured distance on the final docking segment, keep
+  // navigating with IMU + wheel odometry until the docking operation ends.
+  // Latching the mode prevents a bad GPS position from enabling GPS again.
+  #ifdef DOCK_IGNORE_GPS_DISTANCE
+    if (!maps.isDocking()) {
+      if (dockGpsIgnored) CONSOLE.println("dock: GPS position fusion enabled");
+      dockGpsIgnored = false;
+    } else if ((!dockGpsIgnored) && (maps.isTargetingLastDockPoint())) {
+      float dockX;
+      float dockY;
+      float dockDelta;
+      if (maps.getDockingPos(dockX, dockY, dockDelta)) {
+        float dockDistance = distance(dockX, dockY, stateX, stateY);
+        if (dockDistance <= DOCK_IGNORE_GPS_DISTANCE) {
+          dockGpsIgnored = true;
+          CONSOLE.print("dock: ignoring GPS position/heading at distance=");
+          CONSOLE.println(dockDistance);
+        }
+      }
+    }
+    if (dockGpsIgnored) {
+      stateLocalizationMode = LOC_IMU_ODO_ONLY;
+      useGPSposition = false;
+      useGPSdelta = false;
+      useImuAbsoluteYaw = false;
+    }
+  #endif
+
   // ---------- odometry ticks ---------------------------
   long leftDelta = motor.motorLeftTicks-stateLeftTicks;
   long rightDelta = motor.motorRightTicks-stateRightTicks;  

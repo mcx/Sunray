@@ -1285,6 +1285,7 @@ sfe_ublox_status_e SFE_UBLOX_GPS::sendCommand(ubxPacket *outgoingUBX, uint16_t m
 
   if (commType == COMM_TYPE_I2C)
   {
+    if (_i2cPort == NULL) return SFE_UBLOX_STATUS_INVALID_OPERATION;
     retVal = sendI2cCommand(outgoingUBX, maxWait);
     if (retVal != SFE_UBLOX_STATUS_SUCCESS)
     {
@@ -1297,6 +1298,7 @@ sfe_ublox_status_e SFE_UBLOX_GPS::sendCommand(ubxPacket *outgoingUBX, uint16_t m
   }
   else if (commType == COMM_TYPE_SERIAL)
   {
+    if (_serialPort == NULL) return SFE_UBLOX_STATUS_INVALID_OPERATION;
     sendSerialCommand(outgoingUBX);
   }
 

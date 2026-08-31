@@ -74,6 +74,7 @@ void DockOp::begin(){
       stateEstimator.stateSensor = SENS_MAP_NO_ROUTE;
       changeOp(errorOp);      
     } else {    
+      gpsRebootRecoveryOp.rebootGpsOnBegin = false;
       changeOp(gpsRebootRecoveryOp, true);
     }
   } else {
@@ -110,17 +111,36 @@ void DockOp::onTargetReached(){
 
 
 void DockOp::onGpsFixTimeout(){
-    if (REQUIRE_VALID_GPS){    
+    if (activateDeadReckoningNearDock()) return;
+    if (REQUIRE_VALID_GPS){
       stateEstimator.stateSensor = SENS_GPS_FIX_TIMEOUT;
       changeOp(gpsWaitFixOp, true);
     }
 }
 
 void DockOp::onGpsNoSignal(){
-    if (REQUIRE_VALID_GPS){   
+    if (activateDeadReckoningNearDock()) return;
+    if (REQUIRE_VALID_GPS){
       stateEstimator.stateSensor = SENS_GPS_INVALID;
       changeOp(gpsWaitFloatOp, true);
     }
+}
+
+bool DockOp::activateDeadReckoningNearDock(){
+#ifdef DOCK_IGNORE_GPS_DISTANCE
+    if ((!maps.isDocking()) || (!maps.isTargetingLastDockPoint())) return false;
+    float dockDistance = getDockDistance();
+    if (dockDistance > DOCK_IGNORE_GPS_DISTANCE) return false;
+    if (!stateEstimator.dockGpsIgnored){
+      CONSOLE.print("dock: GPS unavailable, activating IMU/odometry at distance=");
+      CONSOLE.println(dockDistance);
+    }
+    stateEstimator.dockGpsIgnored = true;
+    stateEstimator.stateLocalizationMode = LOC_IMU_ODO_ONLY;
+    return true;
+#else
+    return false;
+#endif
 }
 
 void DockOp::onKidnapped(bool state){

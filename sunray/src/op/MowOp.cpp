@@ -72,6 +72,7 @@ void MowOp::begin(){
             changeOp(errorOp);      
         } else {    
             Logger.event(EVT_ERROR_NO_MAP_ROUTE);
+            gpsRebootRecoveryOp.rebootGpsOnBegin = false;
             changeOp(gpsRebootRecoveryOp, true);
         }
     } else {

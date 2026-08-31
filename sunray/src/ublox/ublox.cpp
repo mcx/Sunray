@@ -350,8 +350,31 @@ bool UBLOX::configure(){
 
 void UBLOX::reboot(){
   CONSOLE.println("rebooting GPS receiver...");
-  //configGPS.hardReset();
-  configGPS.GNSSRestart();
+  if (_bus == NULL){
+    CONSOLE.println("ERROR: cannot reboot GPS receiver: serial bus is not initialized");
+    return;
+  }
+
+  // Send UBX-CFG-RST directly over the serial connection used by the parser.
+  // configGPS is only initialized when GPS_CONFIG=true and must not be used
+  // for recovery when GPS_CONFIG=false.
+  uint8_t resetCommand[] = {
+    0xB5, 0x62, // UBX sync
+    0x06, 0x04, // UBX-CFG-RST
+    0x04, 0x00, // payload length
+    0x00, 0x00, // warm start
+    0x02,       // controlled software reset (GNSS only)
+    0x00,       // reserved
+    0x00, 0x00  // checksum (filled below)
+  };
+  calcUBXChecksum(resetCommand, 10, &resetCommand[10], &resetCommand[11]);
+  size_t written = _bus->write(resetCommand, sizeof(resetCommand));
+  _bus->flush();
+  if (written == sizeof(resetCommand)) {
+    CONSOLE.println("GPS receiver reboot command sent");
+  } else {
+    CONSOLE.println("ERROR: GPS receiver reboot command was not fully sent");
+  }
 }
 
 
