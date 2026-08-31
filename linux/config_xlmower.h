@@ -65,7 +65,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define WS_USE_TLS 1
 #define WS_HOST "sunray.owlrobotics.app"
 #define WS_PORT 443
-#define WS_ROBOT_CONNECT_KEY "0a3c8b7c35610c6f9a6207bed6ab8358"
+#define WS_ROBOT_CONNECT_KEY "0a3c8b7c35610c6f9a6207bed6ab8359"
 #define WS_TLS_ROOT_CA_PATH "SYSTEM"
 #define WS_TLS_CLIENT_CERT_PATH ""
 #define WS_TLS_CLIENT_KEY_PATH ""
@@ -162,9 +162,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define MOTOR_DRIVER_BRUSHLESS_GEARS_DRV8308  1   // uncomment for brushless DRV8308 driver and gear/traction motors 
 //#define MOTOR_DRIVER_BRUSHLESS_GEARS_A4931  1   // uncomment for brushless A4931 driver and gear/traction motors
 
-#define MOTOR_FAULT_CURRENT 8.0    // gear motors fault current (amps)
+#define MOTOR_FAULT_CURRENT 5.0    // gear motors fault current (amps)
 #define MOTOR_TOO_LOW_CURRENT 0.00   // gear motor too low current (amps), set to zero (0) to disable
-#define MOTOR_OVERLOAD_CURRENT 7.5    // gear motors overload current (amps)
+#define MOTOR_OVERLOAD_CURRENT 4.0    // gear motors overload current (amps)
 
 #define MOTOR_OVERLOAD_SPEED  0.3    // speed (m/s) to use at motor overload
 
@@ -196,9 +196,9 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define MAX_MOW_RPM  3170  // use this to set max RPM (note: requires mowing motor with rpm control!) 
 //#define MAX_MOW_PWM 200  // use this to permanently reduce mowing motor power (255=max)
 
-#define MOW_FAULT_CURRENT 8.0       // mowing motor fault current (amps)
+#define MOW_FAULT_CURRENT 5.0       // mowing motor fault current (amps)
 #define MOW_TOO_LOW_CURRENT 0.00   // mowing motor too low current (amps) , set to zero (0) to disable
-#define MOW_OVERLOAD_CURRENT 1.0    // mowing motor overload current (amps)
+#define MOW_OVERLOAD_CURRENT 4.0    // mowing motor overload current (amps)
 
 // should the direction of mowing motor toggle each start? (yes: true, no: false)
 #define MOW_TOGGLE_DIR       true
@@ -381,8 +381,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define GPS_REBOOT_RECOVERY  true // allow GPS receiver rebooting (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
 //#define GPS_REBOOT_RECOVERY   false  // do not allow rebooting GPS receiver (no GPS wire fix required)
 
-#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
-//#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
+//#define GPS_CONFIG   true     // configure GPS receiver (recommended - requires GPS wire fix above! otherwise firmware will stuck at boot!)
+#define GPS_CONFIG   false  // do not configure GPS receiver (no GPS wire fix required)
 
 #define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
 //#define GPS_CONFIG_FILTER   false     // use this if you have difficulties to get a FIX solution (uses ublox default filter settings)
@@ -420,14 +420,14 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define DOCKING_STATION true   // use this if docking station available and mower should dock automatically
 //#define DOCKING_STATION false    // mower will just stop after mowing instead of docking automatically 
 
-#define DOCK_IGNORE_GPS false     // use GPS fix in docking station and IMU for GPS float/invalid
-//#define DOCK_IGNORE_GPS true     // ignore GPS fix in docking station and use IMU-only (use this if robot gets false GPS fixes in your docking station)
+//#define DOCK_IGNORE_GPS false     // use GPS fix in docking station and IMU for GPS float/invalid
+#define DOCK_IGNORE_GPS true     // ignore GPS fix in docking station and use IMU-only (use this if robot gets false GPS fixes in your docking station)
 
 #define DOCK_AUTO_START true     // robot will automatically continue mowing after docked automatically
 //#define DOCK_AUTO_START false      // robot will not automatically continue mowing after docked automatically
 
-#define DOCK_RETRY_TOUCH true   // robot will retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
-//#define DOCK_RETRY_TOUCH false   // robot will not retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
+//#define DOCK_RETRY_TOUCH true   // robot will retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
+#define DOCK_RETRY_TOUCH false   // robot will not retry touching docking contacts (max. 1cm) if loosing docking contacts during charging
 
 #define DOCK_UNDOCK_TRACKSLOW_DISTANCE 5 // set distance (m) from dock for trackslow (speed limit)
 
@@ -445,7 +445,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define DOCK_REFLECTOR_TAG  1   // use reflector tag for docking/undocking?
 #define DOCK_LINEAR_SPEED 0.1   // linear speed for docking
 
-#define DOCK_DETECT_OBSTACLE_IN_DOCK false   // enable obstacle detection in dock?
+#define DOCK_DETECT_OBSTACLE_IN_DOCK true   // enable obstacle detection in dock?
 
 // ---- path tracking -----------------------------------
 
@@ -457,8 +457,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define STANLEY_CONTROL_P_NORMAL  2.0   // 3.0 for path tracking control (angular gain) when mowing
 #define STANLEY_CONTROL_K_NORMAL  0.3   // 1.0 for path tracking control (lateral gain) when mowing
 
-#define STANLEY_CONTROL_P_SLOW    1.1   // 1.1 for path tracking control (angular gain) when docking tracking
-#define STANLEY_CONTROL_K_SLOW    0.1   // 0.1 for path tracking control (lateral gain) when docking tracking
+#define STANLEY_CONTROL_P_SLOW    0.5   // 1.1 for path tracking control (angular gain) when docking tracking
+#define STANLEY_CONTROL_K_SLOW    0.05   // 0.1 for path tracking control (lateral gain) when docking tracking
 
 
 // ----- other options --------------------------------------------
