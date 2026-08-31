@@ -335,6 +335,7 @@ void StateEstimator::computeRobotState(){
         float dockDistance = distance(dockX, dockY, stateX, stateY);
         if (dockDistance <= DOCK_IGNORE_GPS_DISTANCE) {
           dockGpsIgnored = true;
+          Logger.event(EVT_DOCK_IGNORING_GPS);
           CONSOLE.print("dock: ignoring GPS position/heading at distance=");
           CONSOLE.println(dockDistance);
         }

@@ -10,6 +10,7 @@
 #include "../../LineTracker.h"
 #include "../../Stats.h"
 #include "../../map.h"
+#include "../../events.h"
 
 DockOp::DockOp(){
   lastMapRoutingFailed = false;
@@ -194,6 +195,7 @@ bool DockOp::activateDeadReckoningNearDock(){
     if (!stateEstimator.dockGpsIgnored){
       CONSOLE.print("dock: GPS unavailable, activating IMU/odometry at distance=");
       CONSOLE.println(dockDistance);
+      Logger.event(EVT_DOCK_IGNORING_GPS);
     }
     stateEstimator.dockGpsIgnored = true;
     stateEstimator.stateLocalizationMode = LOC_IMU_ODO_ONLY;
