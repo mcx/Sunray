@@ -439,11 +439,17 @@ void UBLOX::parse(int b)
       this->state = GOT_SYNC1;
   }
 
-  else if ((b == UBX_SYNC2) && (this->state == GOT_SYNC1)) {
-
-      this->state = GOT_SYNC2;
-      this->chka = 0;
-      this->chkb = 0;
+  else if (this->state == GOT_SYNC1) {
+      if (b == UBX_SYNC2) {
+        this->state = GOT_SYNC2;
+        this->chka = 0;
+        this->chkb = 0;
+      } else if (b != UBX_SYNC1) {
+        // Invalid second sync byte. Reset so a later UBX_SYNC2 byte is not
+        // incorrectly paired with the previous UBX_SYNC1 byte. If this byte
+        // is another UBX_SYNC1, keep waiting to support B5 B5 62 sequences.
+        this->state = GOT_NONE;
+      }
   }
 
   else if (this->state == GOT_SYNC2) {
@@ -882,5 +888,3 @@ void UBLOX::run()
 #endif          
   }  
 }
-
-

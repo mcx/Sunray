@@ -673,6 +673,36 @@ void CanRobotDriver::setUltrasonicMotionDirectionHint(UltrasonicMotionDirection 
   ultrasonicMotionDirectionHintUntil = (direction == ultrasonic_motion_any) ? 0 : millis() + holdMs;
 }
 
+void CanRobotDriver::debugUltrasonicStatus() const{
+  CONSOLE.print("CAN ultrasonic debug (polling,valid,age_ms,levels,missing,legacyL,legacyR,slow): ");
+  CONSOLE.print((int)kCanUltrasonicPollingEnabled);
+  CONSOLE.print("\t");
+  CONSOLE.print((int)ultrasonicWarningLevelValid);
+  CONSOLE.print("\t");
+  if (ultrasonicWarningLevelValid) CONSOLE.print((int)(millis() - ultrasonicWarningLevelUpdated));
+    else CONSOLE.print(-1);
+  CONSOLE.print("\t");
+  for (uint8_t i = 0; i < kUltrasonicWarningLevelCount; i++) {
+    if (i > 0) CONSOLE.print(",");
+    CONSOLE.print((int)ultrasonicWarningLevel[i]);
+  }
+  CONSOLE.print("\t");
+  for (uint8_t i = 0; i < kUltrasonicWarningLevelCount; i++) {
+    if (i > 0) CONSOLE.print(",");
+    CONSOLE.print((int)ultrasonicSensorMissing[i]);
+  }
+  CONSOLE.print("\t");
+  CONSOLE.print((int)ultrasonicLeftValid);
+  CONSOLE.print(":");
+  CONSOLE.print((int)ultrasonicLeftDistance);
+  CONSOLE.print("\t");
+  CONSOLE.print((int)ultrasonicRightValid);
+  CONSOLE.print(":");
+  CONSOLE.print((int)ultrasonicRightDistance);
+  CONSOLE.print("\t");
+  CONSOLE.println((int)triggeredUltrasonicSlowDown);
+}
+
 bool CanRobotDriver::configuredUltrasonicWarningAtOrAbove(uint8_t minLevel, UltrasonicMotionDirection direction) const{
   if (!ultrasonicWarningLevelValid) return false;
   for (uint8_t i = 0; i < kUltrasonicWarningLevelCount; i++) {
@@ -749,6 +779,7 @@ void CanRobotDriver::handleUltrasonicResponse(bool isLeft, bool valid, uint16_t 
 }
 
 void CanRobotDriver::handleUltrasonicWarningLevels(canDataType_t data){
+  const bool wasValid = ultrasonicWarningLevelValid;
   for (uint8_t i = 0; i < kUltrasonicWarningLevelCount; i++) {
     uint8_t packed = data.byteVal[i / 2];
     uint8_t shift = (i % 2) * 4;
@@ -757,12 +788,18 @@ void CanRobotDriver::handleUltrasonicWarningLevels(canDataType_t data){
   }
   ultrasonicWarningLevelValid = true;
   ultrasonicWarningLevelUpdated = millis();
+  if (SONAR_ENABLE && !wasValid) {
+    CONSOLE.println("CAN ultrasonic debug: first generic warning-level frame received");
+  }
   updateUltrasonicDerivedState();
 }
 
 void CanRobotDriver::processUltrasonicTimeouts(){
   unsigned long now = millis();
   if (ultrasonicWarningLevelValid && (now - ultrasonicWarningLevelUpdated > kUltrasonicGenericTimeoutMs)) {
+    if (SONAR_ENABLE) {
+      CONSOLE.println("CAN ultrasonic debug: generic warning-level frame timeout");
+    }
     ultrasonicWarningLevelValid = false;
     ultrasonicWarningLevelUpdated = 0;
     ultrasonicMissingSensorError = false;
@@ -1590,7 +1627,10 @@ void CanRobotDriver::run(){
       CONSOLE.print(" pwm=");
       CONSOLE.print(requestLeftPwm);
       CONSOLE.print(","); 
-      CONSOLE.println(requestRightPwm);  
+      CONSOLE.println(requestRightPwm);
+      if (SONAR_ENABLE) {
+        debugUltrasonicStatus();
+      }
     }
 
     if (!mcuCommunicationLost){
