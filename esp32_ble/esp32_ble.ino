@@ -2,6 +2,11 @@
      1. BLE UART bridge (GATT server UART)
      2. WiFi UART bridge (HTTP server UART)
 
+     Reference build target:
+       Arduino IDE 1.8.19
+       Espressif Arduino-ESP32 3.3.11
+       Board: ESP32 Dev Module, Flash Mode: DIO, Partition Scheme: Minimal SPIFFS
+
 
   serial protocol:
 
