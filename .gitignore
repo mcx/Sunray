@@ -1,1 +1,5 @@
 .DS_Store
+
+# Local ESP32 device configurations contain WiFi/cloud credentials.
+esp32_ble/config.h
+esp32_ble/config_wlan*.local.h
