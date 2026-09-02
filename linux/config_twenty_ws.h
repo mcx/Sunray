@@ -467,6 +467,20 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 //#define DOCK_APRIL_TAG 1         // use visual (april-tag) docking/undocking?
 //#define DOCK_GUIDANCE_SHEET  1   // use guidance sheet for docking/undocking?
 //#define DOCK_REFLECTOR_TAG  1   // use reflector tag for docking/undocking?
+#define DOCK_LED_STRIP 1         // native V4L2 camera LED-strip docking/undocking (no ROS)
+#define DOCK_LED_STRIP_SWITCH_DISTANCE 1.5
+#define DOCK_LED_STRIP_CAMERA_INDEX 0
+#define DOCK_LED_STRIP_DETECTION_FPS 10
+#define DOCK_LED_STRIP_MIN_BRIGHTNESS 220
+#define DOCK_LED_STRIP_MAX_COLOR_SPREAD 60
+#define DOCK_LED_STRIP_MIN_LEDS 5
+#define DOCK_LED_STRIP_MIN_VERTICAL_SPAN 0.18
+#define DOCK_LED_STRIP_MAX_SLOPE 0.12
+#define DOCK_LED_STRIP_ACQUIRE_FRAMES 3
+#define DOCK_LED_STRIP_LOST_TIMEOUT_MS 500
+#define DOCK_LED_STRIP_ANGULAR_P 0.7
+#define DOCK_LED_STRIP_MAX_ANGULAR 0.35
+#define DOCK_LED_STRIP_MAX_ERROR_FOR_DRIVE 0.65
 #define DOCK_LINEAR_SPEED 0.08   // linear speed for docking
 
 #define DOCK_DETECT_OBSTACLE_IN_DOCK true   // enable obstacle detection in dock?

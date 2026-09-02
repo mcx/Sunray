@@ -349,6 +349,63 @@ void StateEstimator::computeRobotState(){
     }
   #endif
 
+  // ------- native camera LED-strip docking --------------------------
+  // GPS is used up to the configured hand-off distance. From there the
+  // camera controller owns steering while odometry keeps the travelled
+  // distance. Undocking starts on camera guidance and latches back to GPS
+  // after the same distance so a noisy position cannot toggle modes.
+  #ifdef DOCK_LED_STRIP
+    const bool ledDocking = maps.isDocking();
+    const bool ledUndocking = maps.isUndocking();
+    float ledDockDistance = 1e6f;
+    float ledDockX = 0.0f;
+    float ledDockY = 0.0f;
+    float ledDockDelta = 0.0f;
+    if ((ledDocking || ledUndocking) &&
+        maps.getDockingPos(ledDockX, ledDockY, ledDockDelta)) {
+      ledDockDistance = distance(ledDockX, ledDockY, stateX, stateY);
+    }
+
+    if (!ledDocking && !ledUndocking) {
+      dockLedStripActive = false;
+      dockLedStripUndockCompleted = false;
+    } else if (ledDocking) {
+      dockLedStripUndockCompleted = false;
+      if (!dockLedStripActive && maps.isTargetingLastDockPoint() &&
+          ledDockDistance <= DOCK_LED_STRIP_SWITCH_DISTANCE) {
+        dockLedStripActive = true;
+        CONSOLE.print("dock LED: camera guidance enabled at distance=");
+        CONSOLE.println(ledDockDistance);
+      }
+    } else {
+      if (!dockLedStripUndockCompleted && !dockLedStripActive) {
+        dockLedStripActive = true;
+        dockLedStripStartLeftTicks = motor.motorLeftTicks;
+        dockLedStripStartRightTicks = motor.motorRightTicks;
+        CONSOLE.println("undock LED: camera guidance enabled");
+      }
+      const float ledTicksPerCm = motor.ticksPerCm > 0.001f ? motor.ticksPerCm : 0.001f;
+      const float ledUndockLeft = fabs((float)(motor.motorLeftTicks - dockLedStripStartLeftTicks)) /
+                                   ledTicksPerCm / 100.0f;
+      const float ledUndockRight = fabs((float)(motor.motorRightTicks - dockLedStripStartRightTicks)) /
+                                    ledTicksPerCm / 100.0f;
+      const float ledUndockTravel = (ledUndockLeft + ledUndockRight) * 0.5f;
+      if (dockLedStripActive && ledUndockTravel >= DOCK_LED_STRIP_SWITCH_DISTANCE) {
+        dockLedStripActive = false;
+        dockLedStripUndockCompleted = true;
+        CONSOLE.print("undock LED: GPS guidance enabled after travel=");
+        CONSOLE.println(ledUndockTravel);
+      }
+    }
+
+    if (dockLedStripActive) {
+      stateLocalizationMode = LOC_LED_STRIP;
+      useGPSposition = false;
+      useGPSdelta = false;
+      useImuAbsoluteYaw = false;
+    }
+  #endif
+
   // ---------- odometry ticks ---------------------------
   long leftDelta = motor.motorLeftTicks-stateLeftTicks;
   long rightDelta = motor.motorRightTicks-stateRightTicks;  

@@ -44,6 +44,10 @@
 #include "mqtt.h"
 #include "events.h"
 
+#ifdef DOCK_LED_STRIP
+extern "C" void cameraLedStripEnable(int index, int fps);
+#endif
+
 // #define I2C_SPEED  10000
 #define _BV(x) (1 << (x))
 
@@ -553,6 +557,13 @@ void outputConfig(){
     CONSOLE.print("DOCK_CONTACT_ADVANCE_DISTANCE: ");
     CONSOLE.println(DOCK_CONTACT_ADVANCE_DISTANCE);
   #endif
+  #ifdef DOCK_LED_STRIP
+    CONSOLE.println("DOCK_LED_STRIP: native V4L2 (no ROS)");
+    CONSOLE.print("DOCK_LED_STRIP_SWITCH_DISTANCE: ");
+    CONSOLE.println(DOCK_LED_STRIP_SWITCH_DISTANCE);
+    CONSOLE.print("DOCK_LED_STRIP_CAMERA_INDEX: ");
+    CONSOLE.println(DOCK_LED_STRIP_CAMERA_INDEX);
+  #endif
   CONSOLE.print("DOCK_AUTO_START: ");
   CONSOLE.println(DOCK_AUTO_START);
   CONSOLE.print("TARGET_REACHED_TOLERANCE: ");
@@ -648,6 +659,10 @@ void start(){
   lidarBumper.begin();
 
   outputConfig();
+
+  #ifdef DOCK_LED_STRIP
+    cameraLedStripEnable(DOCK_LED_STRIP_CAMERA_INDEX, DOCK_LED_STRIP_DETECTION_FPS);
+  #endif
 
   if (TOF_ENABLE){
     tof.setTimeout(500);
